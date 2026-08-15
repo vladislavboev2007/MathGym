@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <link rel="shortcut icon" href="static/MiniIcon.png" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Результат тренировки</title>
+    <style>
+        html {
+        overflow-y: hidden;
+        }
+        body {
+            font-family: "Comic Sans MS";
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+            background:
+                linear-gradient(rgba(0,255,0,0.1) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0,255,0,0.1) 1px, transparent 1px),
+                #e0f7fa;
+            background-size: 100px 100px;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 40px;
+        }
+
+        .result-title {
+            font-size: 63px;
+            font-weight: bold;
+            text-align: center;
+            margin: 30px 0;
+        }
+
+        .stats {
+            font-size: 50px;
+            text-align: center;
+            line-height: 1.5;
+            margin-bottom: 20px;
+        }
+
+        .difficulty {
+            font-size: 50px;
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .buttons-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+
+        button {
+            padding: 10px 10px;
+            font-size: 20px;
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+            font-family: "Comic Sans MS", cursive;
+        }
+
+        .main-btn {
+            width: 240px;
+            height: 80px;
+            border: 2px solid #333;
+            background: none;
+            margin: 20px 20px;
+            cursor: pointer;
+            background-color: rgba(68, 114, 196, 1);
+            color: White;
+            border: 1pt solid rgba(173, 216, 230, 0);
+            font-size: 42px;
+            font-family: 'Comic Sans MS';
+            cursor: pointer;
+            text-decoration: none;
+            border-radius: 15px;
+            box-shadow: 0 1pt 4pt rgba(0, 0, 0, 0.57);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .repeat-btn {
+            width: 240px;
+            height: 80px;
+            background: none;
+            margin: 20px 20px;
+            cursor: pointer;
+            background-color: rgba(68, 114, 196, 1);
+            color: White;
+            border: 1pt solid rgba(173, 216, 230, 0);
+            font-size: 42px;
+            font-family: 'Comic Sans MS';
+            cursor: pointer;
+            border-radius: 15px;
+            box-shadow: 0 1pt 4pt rgba(0, 0, 0, 0.57);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .error-btn {
+            background: #FF4444;
+            color: white;
+            font-size: 50px;
+            border-radius: 15px;
+            box-shadow: 0 1pt 4pt rgba(0, 0, 0, 0.57);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .save-btn {
+            background: #4CAF50;
+            color: white;
+            font-size: 50px;
+            border-radius: 15px;
+            box-shadow: 0 1pt 4pt rgba(0, 0, 0, 0.57);
+            position: relative;
+            overflow: hidden;
+        }
+
+        h1  {
+
+            font-size: 32px;
+
+        }
+
+        .grid {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            pointer-events: none;
+        }
+
+        .grid:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: linear-gradient(90deg, rgba(0, 128, 0, 0.2) 1px, transparent 1px),
+                              linear-gradient(180deg, rgba(0, 128, 0, 0.2) 1px, transparent 1px);
+            background-size: 50px 50px;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="grid"></div>
+    <div class="header">
+        <button class="main-btn" onclick="location.href = '{{ url_for('main') }}'">Главная</button>
+        <h1 class="font-size: 32px;">{{ settings.profile_name }}</h1>
+        <button class="repeat-btn" onclick="location.href = '{{ url_for('training', difficulty=session.difficulty) }}'">Повторить</button>
+    </div>
+
+    <div class="content">
+        <div class="result-title">Ваш результат</div>
+
+        <div class="stats">
+            <div>Правильных ответов: {{ session.correct }}/{{ session.total }}</div>
+            <div>Время тренировки: {{ "%02d:%02d"|format((total_time//60)|int, total_time%60) }}</div>
+        </div>
+
+        <div class="difficulty">Уровень сложности: {{ session.difficulty }}</div>
+
+        <div class="buttons-container">
+            <button class="error-btn" onclick="location.href = '{{ url_for('show_mistakes') }}'">Посмотреть ошибки</button>
+            <button class="save-btn" onclick="saveResult()">Сохранить результат</button>
+        </div>
+    </div>
+    <form action="/download_result" method="post">
+    <input type="hidden" name="profname" value="Имя профиля">
+    <input type="hidden" name="correct_q" value="10">
+    <input type="hidden" name="total_q" value="20">
+    <input type="hidden" name="level_d" value="Легкий">
+    <input type="hidden" name="mistakes" value="Ошибки">
+    <input type="hidden" name="total_t" value="300">
+</form>
+
+<script>
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const profileName = "{{ settings.profile_name }}";
+        const correctAnswers = {{ correct }};
+        const totalQuestions = {{ total }};
+        const difficultyLevel = "{{ difficulty }}";
+        const mistakes = [];
+        const totalTime = {{ total_time }};
+
+        fetch("{{ url_for('save_result_route') }}", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                profile_name: profileName,
+                correct: correctAnswers,
+                total: totalQuestions,
+                difficulty: difficultyLevel,
+                mistakes: mistakes,
+                total_time: totalTime
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'ok') {
+                console.log('Результат успешно сохранен');
+            }
+        });
+    });
+
+    function saveResult() {
+        const data = {
+            profile_name: "{{ settings.profile_name }}",
+            correct: {{ session.correct }},
+            total: {{ session.total }},
+            difficulty: "{{ session.difficulty }}",
+            total_time: {{ total_time }},
+            mistakes: {{ session.mistakes|tojson }}
+        };
+
+        fetch("{{ url_for('save_result_route') }}", {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify(data)
+        })
+        .then(response => {
+            if (response.ok) {
+                return response.blob();
+            } else {
+                throw new Error('Ошибка при сохранении результата');
+            }
+        })
+        .then(blob => {
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.style.display = 'none';
+            a.href = url;
+            a.download = 'Result_of_Gym_MathGym.docx';
+            document.body.appendChild(a);
+            a.click();
+            window.URL.revokeObjectURL(url);
+        })
+        .catch(error => {
+            console.error('Ошибка:', error);
+        });
+    }
+    </script>
+</body>
+</html>

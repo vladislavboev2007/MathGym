@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <link rel="shortcut icon" href="static/MiniIcon.png" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <title>Математический тренажёр</title>
+    <style>
+        html {
+        overflow-y: hidden;
+        }
+        body {
+            font-family: "MS Comic Sans", cursive;
+            background-color: #e6f7ff;
+            background-image: linear-gradient(rgba(0,255,0,0.1) 1px, transparent 1px),
+                            linear-gradient(90deg, rgba(0,255,0,0.1) 1px, transparent 1px);
+            background-size: 20px 20px;
+            background:
+                linear-gradient(rgba(0,255,0,0.1) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0,255,0,0.1) 1px, transparent 1px),
+                #e0f7fa;
+            background-size: 100px 100px;
+            margin: 20px;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 40px;
+        }
+
+        .settings-title {
+            font-size: 40px;
+            position: absolute;
+            left: 50%;
+            top: 5%;
+            transform: translateX(-50%);
+        }
+
+        .row {
+            display: flex;
+            align-items: center;
+            margin: 15px 0;
+        }
+
+        label {
+            width: 800px;
+            margin-right: 20px;
+            font-size: 50px;
+            margin: 0 20px;
+        }
+
+        input[type="text"] {
+            width: 525px;
+            height: 40px;
+            padding: 5px;
+            font-family: "MS Comic Sans", cursive;
+            font-size: 42px;
+        }
+
+        select {
+            width: 540px;
+            height: 70px;
+            padding: 5px;
+            font-family: "MS Comic Sans", cursive;
+            font-size: 42px;
+        }
+
+        .checkbox-group {
+            padding-left: 10px;
+
+        }
+
+        .radio-group {
+            margin: 10px 0 10px 30px;
+        }
+
+        input[type="number"] {
+            width: 50px;
+            margin-left: 10px;
+            font-family: "MS Comic Sans", cursive;
+        }
+
+        button {
+            width: 240px;
+            height: 80px;
+            border: 2px solid #333;
+            background: none;
+            margin: 20px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            background-color: rgba(68, 114, 196, 1); /* Сплошная заливка (голубой, прозрачность 0%) */
+            color: White; /* Цвет текста (прозрачный) */
+            border: 1pt solid rgba(173, 216, 230, 0); /* Сплошная линия, голубой цвет, прозрачность 0% */
+            font-size: 42px; /* Размер шрифта */
+            font-family: 'Comic Sans MS';
+            cursor: pointer; /* Указатель мыши */
+            text-decoration: none; /* Убираем подчеркивание */
+            border-radius: 15px; /* Скругленные углы */
+            box-shadow: 0 1pt 4pt rgba(0, 0, 0, 0.57); /* Тень */
+            position: relative; /* Для эффекта рельефа */
+            overflow: hidden; /* Для обрезки рельефа */
+        }
+
+        .grid {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            pointer-events: none; /* чтобы сетка не мешала взаимодействию с другими элементами */
+        }
+
+        .grid:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: linear-gradient(90deg, rgba(0, 128, 0, 0.2) 1px, transparent 1px), /* зеленый, акцент 6 */
+                              linear-gradient(180deg, rgba(0, 128, 0, 0.2) 1px, transparent 1px);
+            background-size: 50px 50px; /* размер ячеек сетки */
+            pointer-events: none; /* чтобы сетка не мешала взаимодействию с другими элементами */
+        }
+    </style>
+</head>
+<body>
+    <div class="grid"></div>
+    <div class="header">
+        <button type="button" onclick="location.href = '{{ url_for('main') }}'">Назад</button>
+        <span class="settings-title">Настройки</span>
+    </div>
+<form method="POST" action="{{ url_for('settings') }}">
+    <div class="row">
+        <label>Имя профиля:</label>
+        <input type="text" name="profile_name" value="{{ settings.profile_name }}">
+    </div>
+    <div class="checkbox-group">
+        <label>
+             <input type="checkbox" name="time_limit" id="timeLimitCheck" {% if settings.time_limit %}checked{% endif %} onchange="toggleCustomTimeInput()">
+                Ограничение тренажера по времени
+        </label>
+        <div class="radio-group">
+
+            <div>
+    <input type="radio" name="time_settings" value="15" {% if settings.time_settings == 15 %}checked{% endif %} onchange="toggleCustomTimeInput()" id="time15"> Выполнять каждое задание в течение 15 секунд
+                <br>
+    <input type="radio" name="time_settings" value="30" {% if settings.time_settings == 30 %}checked{% endif %} onchange="toggleCustomTimeInput()" id="time30"> Выполнять каждое задание в течение 30 секунд
+                <br>
+    <input type="radio" name="time_settings" value="custom" {% if settings.time_settings not in [15, 30] %}checked{% endif %} onchange="toggleCustomTimeInput()" id="timeCustom"> Выполнять каждое задание в течение определенного количество секунд
+    <input type="number" name="custom_time" min="1" max="600" value="{{ settings.time_settings if settings.time_settings not in [15, 30] else '' }}" id="customTimeInput" {% if settings.time_settings in [15, 30] %}disabled{% endif %}>
+</div>
+            </div>
+
+        </div>
+    </div>
+    <div class="checkbox-group">
+        <label>
+            <input type="checkbox" name="task_limit" id="taskLimitCheck" {% if settings.task_limit %}checked{% endif %} onchange="toggleCustomTaskInput()">
+            Ограничение количества заданий
+        </label>
+        <div class="radio-group">
+            <div>
+            <input type="radio" name="task_count" value="10" {% if settings.task_count == 10 %}checked{% endif %} onchange="toggleCustomTaskInput()" id="task10"> Выполнять 10 заданий
+                <br>
+            <input type="radio" name="task_count" value="20" {% if settings.task_count == 20 %}checked{% endif %} onchange="toggleCustomTaskInput()" id="task20"> Выполнять 20 заданий
+                <br>
+            <input type="radio" name="task_count" value="custom" {% if settings.task_count not in [10, 20] %}checked{% endif %} onchange="toggleCustomTaskInput()" id="taskCustom"> Выполнять определенное количество заданий
+            <input type="number" name="custom_tasks" min="1" max="99" value="{{ settings.task_count if settings.task_count not in [10, 20] else '' }}" id="customTasksInput" {% if settings.task_count in [10, 20] %}disabled{% endif %}>
+            </div>
+        </div>
+    </div>
+    <button type="submit">Сохранить</button>
+</form>
+
+
+    <script>
+
+
+       function toggleCustomTimeInput() {
+    const customTimeInput = document.getElementById('customTimeInput');
+    const timeLimitCheck = document.getElementById('timeLimitCheck');
+    const timeSettingsRadios = document.getElementsByName('time_settings');
+
+    if (timeLimitCheck.checked) {
+        // Включаем радиокнопки
+        timeSettingsRadios.forEach(radio => radio.disabled = false);
+
+
+        const isCustomSelected = Array.from(timeSettingsRadios).some(radio => radio.checked && (radio.value === 'custom'));
+        customTimeInput.disabled = !isCustomSelected;
+    } else {
+        timeSettingsRadios.forEach(radio => {
+            radio.disabled = true;
+            radio.checked = false;
+        });
+        customTimeInput.disabled = true;
+        customTimeInput.value = '';
+    }
+}
+
+    function toggleCustomTaskInput() {
+    const customTasksInput = document.getElementById('customTasksInput');
+    const taskLimitCheck = document.getElementById('taskLimitCheck');
+    const taskCountRadios = document.getElementsByName('task_count');
+
+    // Check if the task limit checkbox is checked
+    if (taskLimitCheck.checked) {
+        // Enable the radio buttons
+        taskCountRadios.forEach(radio => radio.disabled = false);
+
+        // Enable or disable the custom input based on the selected radio button
+        const isCustomSelected = Array.from(taskCountRadios).some(radio => radio.checked && (radio.value === 'custom'));
+        customTasksInput.disabled = !isCustomSelected;
+    } else {
+        // Disable radio buttons and clear selection
+        taskCountRadios.forEach(radio => {
+            radio.disabled = true;
+            radio.checked = false;
+        });
+        customTasksInput.disabled = true;
+        customTasksInput.value = '';
+    }
+}
+
+
+     document.addEventListener('DOMContentLoaded', function() {
+            toggleCustomTimeInput();
+            toggleCustomTaskInput();
+        });
+
+        document.getElementById('save-btn').addEventListener('click', function() {
+            const formData = new FormData(document.getElementById('settings-form'));
+            fetch("{{ url_for('settings') }}", {
+                method: 'POST',
+                body: formData
+            }).then(response => {
+                if (response.ok) {
+                    alert('Настройки сохранены!');
+                    location.reload();
+                }
+            });
+        });
+
+        window.addEventListener('beforeunload', function(e) {
+            fetch('/save-settings', { method: 'POST' });
+        });
+        document.getElementById('timeLimitCheck').addEventListener('change', function() {
+            document.querySelectorAll('input[name="time_settings"]').forEach(el =>
+                el.disabled = !this.checked);
+        });
+
+        document.querySelectorAll('input[type="radio"]').forEach(radio => {
+            radio.addEventListener('change', function() {
+                if(this.parentElement.querySelector('input[type="number"]')) {
+                    this.parentElement.querySelector('input[type="number"]').disabled = !this.checked;
+                }
+            });
+        });
+
+        document.querySelector('form').addEventListener('form', function(e) {
+    const timeInput = document.getElementById('customTimeInput');
+    const taskInput = document.getElementById('customTasksInput');
+
+    if (timeInput.disabled === false && (timeInput.value < 1 || timeInput.value > 600)) {
+        alert('Время должно быть от 1 до 600 секунд');
+        e.preventDefault();
+    }
+
+    if (taskInput.disabled === false && (taskInput.value < 1 || taskInput.value > 99)) {
+        alert('Количество заданий должно быть от 1 до 99');
+        e.preventDefault();
+    }
+});
+    </script>
+</body>
+</html>

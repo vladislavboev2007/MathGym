@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <link rel="shortcut icon" href="static/MiniIcon.png" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Главная - MathGym</title>
+    <script>
+        function viewInfo() {
+    alert('MathGym — это интерактивный математический тренажер, разработанный для улучшения навыков решения математических задач у пользователей. Разработчики: Колпаков Матвей и Боев Владислав.');
+}
+
+        window.addEventListener('beforeunload', function(e) {
+            fetch('/save-settings', { method: 'POST' });
+        });
+    </script>
+    <style>
+        html {
+        overflow-y: hidden;
+        }
+        body {
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            background:
+                linear-gradient(rgba(0,255,0,0.1) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0,255,0,0.1) 1px, transparent 1px),
+                #e0f7fa;
+            background-size: 100px 100px;
+        }
+
+        .top-buttons {
+            position: absolute;
+            top: 20px;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            padding: 0 20px;
+            box-sizing: border-box;
+
+        }
+
+        .info-button {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            width: 80px;
+            padding: 10px 20px;
+            background-color: #2196F3;
+            color: white;
+            border: 2px solid #333;
+            border-radius: 8px;
+            cursor: pointer;
+            background-color: rgba(68, 114, 196, 1);
+            color: White;
+            border: 1pt solid rgba(173, 216, 230, 0);
+            font-size: 42px;
+            font-family: 'Comic Sans MS';
+            cursor: pointer;
+            text-decoration: none;
+            border-radius: 15px;
+            box-shadow: 0 1pt 4pt rgba(0, 0, 0, 0.57);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .info-button::before {
+            content: '';
+            position: absolute;
+            top: -6pt;
+            left: 0;
+            right: 0;
+            height: 6pt;
+            background: linear-gradient(to bottom, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0));
+            border-radius: 15px 15px 0 0;
+        }
+        .info-button::after {
+            content: '';
+            position: absolute;
+            bottom: -6pt;
+            left: 0;
+            right: 0;
+            height: 6pt;
+            background: radial-gradient(circle, rgba(0, 0, 0, 0.1) 0%, rgba(0, 0, 0, 0) 70%);
+            border-radius: 0 0 15px 15px;
+        }
+
+
+
+        .user-name {
+            position: absolute;
+            top: 50px;
+            font-size: 32px;
+            font-family: 'Comic Sans MS';
+        }
+
+        h1 {
+            font-size: 70px;
+            top: 220px;
+            position: absolute;
+            font-family: 'Comic Sans MS';
+        }
+
+        #main-btn {
+            border: 2px solid #333;
+            color: white;
+            background: #00b300;
+            border-radius: 8px;
+            cursor: pointer;
+            color: White;
+            border: 1pt solid rgba(173, 216, 230, 0);
+            padding: 15px 40px;
+            font-size: 60px;
+            font-family: 'Comic Sans MS';
+            text-decoration: none;
+            border-radius: 15px;
+            box-shadow: 0 1pt 4pt rgba(0, 0, 0, 0.57);
+            position: relative;
+            overflow: hidden;
+            bottom: 200px;
+        }
+
+        .main-btn::before {
+            content: '';
+            position: absolute;
+            top: -6pt;
+            left: 0;
+            right: 0;
+            height: 6pt;
+            background: linear-gradient(to bottom, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0));
+            border-radius: 15px 15px 0 0;
+        }
+
+        .main-btn::after {
+            content: '';
+            position: absolute;
+            bottom: -6pt;
+            left: 0;
+            right: 0;
+            height: 6pt;
+            background: radial-gradient(circle, rgba(0, 0, 0, 0.1) 0%, rgba(0, 0, 0, 0) 70%);
+            border-radius: 0 0 15px 15px;
+        }
+
+        .stats {
+            position: absolute;
+            left: 20px;
+            bottom: 20px;
+            font-size: 40px;
+            font-family: 'Comic Sans MS';
+        }
+
+        .bottom-buttons {
+            position: absolute;
+            right: 20px;
+            bottom: 20px;
+            display: flex;
+            gap: 10px;
+        }
+
+        .green {
+            color: #4CAF50;
+            font-weight: bold;
+        }
+
+        .nav-btn {
+            width: 240px;
+            height: 60px;
+            border: 2px solid #333;
+            background: none;
+            border-radius: 8px;
+            cursor: pointer;
+            background-color: rgba(68, 114, 196, 1);
+            color: White;
+            border: 1pt solid rgba(173, 216, 230, 0);
+            font-size: 42px;
+            font-family: 'Comic Sans MS';
+            cursor: pointer;
+            text-decoration: none;
+            border-radius: 15px;
+            box-shadow: 0 1pt 4pt rgba(0, 0, 0, 0.57);
+            position: relative;
+            overflow: hidden;
+        }
+        .nav-btnEnter {
+            width: 420px;
+            height: 60px;
+            border: 2px solid #333;
+            background: none;
+            border-radius: 8px;
+            cursor: pointer;
+            background-color: rgba(68, 114, 196, 1);
+            color: White;
+            border: 1pt solid rgba(173, 216, 230, 0);
+            font-size: 42px;
+            font-family: 'Comic Sans MS';
+            cursor: pointer;
+            text-decoration: none;
+            border-radius: 15px;
+            box-shadow: 0 1pt 4pt rgba(0, 0, 0, 0.57);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .grid {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            pointer-events: none;
+        }
+
+        .grid:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: linear-gradient(90deg, rgba(0, 128, 0, 0.2) 1px, transparent 1px),
+                              linear-gradient(180deg, rgba(0, 128, 0, 0.2) 1px, transparent 1px);
+            background-size: 50px 50px;
+            pointer-events: none;
+        }
+        .image-margin {
+        margin-bottom: 300px;
+    }
+    </style>
+</head>
+<body>
+<div class="grid"></div>
+    <div class="top-buttons">
+        <button class="info-button" onclick="viewInfo()">i</button>
+    </div>
+
+    <div class="user-name">{{ settings.profile_name }}</div>
+
+    <img src="/static/icon.png" alt="MathGym" height="150" width="450" class="image-margin">
+
+
+    <button id="main-btn" onclick="location.href = '{{ url_for('choose_level') }}'">Начать тренировку</button>
+
+
+    <div class="stats">
+        Способность решения любых задач: <span class="green" pattern="\d+(\.\d{2})?">{{ "%.2f"|format(Ability_total) }}%</span>
+    </div>
+
+    <div class="bottom-buttons">
+        <button class="nav-btnEnter" onclick="location.href='https://forms.yandex.ru/u/679e4608f47e7363c080ada1/';">Оставить отзыв</button>
+        <button class="nav-btn" onclick="location.href = '{{ url_for('settings') }}'">Настройки</button>
+    </div>
+</body>
+</html>

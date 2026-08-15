@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <link rel="shortcut icon" href="static/MiniIcon.png"/>
+    <meta charset="UTF-8">
+    <title>Тренировка</title>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        #timer {
+            border: 3px solid #4CAF50;
+            border-radius: 10px;
+            padding: 10px 20px;
+            background: white;
+        }
+
+        .timer-warning {
+            border-color: #FFC107 !important;
+        }
+
+        .timer-critical {
+            border-color: #F44336 !important;
+        }
+        html {
+            overflow-y: hidden;
+        }
+        body {
+            font-family: 'Comic Sans MS', cursive;
+            margin: 0;
+            min-height: 100vh;
+            background:
+                linear-gradient(rgba(0,255,0,0.1) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0,255,0,0.1) 1px, transparent 1px),
+                #e0f7fa;
+            background-size: 100px 100px;
+            position: relative;
+            padding: 20px;
+
+        }
+
+        #exit-btn {
+            position: absolute;
+            top: 40px;
+            right: 60px;
+            padding: 15px 40px;
+            background: #ff4757;
+            color: white;
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+            font-size: 42px;
+            font-family: 'Comic Sans MS';
+            box-shadow: 0 1pt 4pt rgba(0, 0, 0, 1);
+            overflow: hidden;
+        }
+
+        #exit-btn::before {
+            content: '';
+            position: absolute;
+            top: -6pt;
+            left: 0;
+            right: 0;
+            height: 6pt;
+            background: linear-gradient(to bottom, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0));
+            border-radius: 15px 15px 0 0;
+        }
+        #exit-btn::after {
+            content: '';
+            position: absolute;
+            bottom: -6pt;
+            left: 0;
+            right: 0;
+            height: 6pt;
+            background: radial-gradient(circle, rgba(0, 0, 0, 0.1) 0%, rgba(0, 0, 0, 0) 70%);
+            border-radius: 0 0 15px 15px;
+        }
+
+
+        #timer {
+            position: absolute;
+            padding: 15px 20px;
+            top: 40px;
+            left: 60px;
+            font-size: 42px;
+            cursor: pointer;
+            border: 1pt solid rgba(173, 216, 230, 0);
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 128vh;
+        }
+
+        .formula {
+            font-family: 'Cambria Math';
+            font-size: 35px;
+            position: absolute;
+            top: 360px;
+            left: 80px;
+            text-align: left;
+        }
+
+        .counter {
+            font-size: 60px;
+            position: absolute;
+            top: 180px;
+            left: 80px;
+            text-align: left;
+
+        }
+        .question {
+            font-size: 40px;
+            position: absolute;
+            top: 300px;
+            left: 80px;
+            text-align: left;
+
+        }
+
+
+        .timer {
+            padding: 40px 65px;
+            background: white;
+            border: 2px solid #2ed573;
+            border-radius: 10px;
+            font-size: 24px;
+            margin: 15px 0;
+        }
+
+        .timeout {
+            color: red;
+            font-size: 24px;
+            display: none;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .input-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        #answer-input {
+            padding: 12px;
+            border: 2px solid #2ed573;
+            border-radius: 8px;
+            font-family: 'Comic Sans MS', cursive;
+            width: 300px;
+        }
+
+        #submit-btn {
+            padding: 12px 24px;
+            background: #2196F3;
+            font-size: 24px;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-family: 'Comic Sans MS';
+            box-shadow: 0 1pt 4pt rgba(0, 0, 0, 1);
+            overflow: hidden;
+        }
+
+        #submit-btn::before {
+            content: '';
+            position: absolute;
+            top: -6pt;
+            left: 0;
+            right: 0;
+            height: 6pt;
+            background: linear-gradient(to bottom, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0));
+            border-radius: 15px 15px 0 0;
+        }
+        #submit-btn::after {
+            content: '';
+            position: absolute;
+            bottom: -6pt;
+            left: 0;
+            right: 0;
+            height: 6pt;
+            background: radial-gradient(circle, rgba(0, 0, 0, 0.1) 0%, rgba(0, 0, 0, 0) 70%);
+            border-radius: 0 0 15px 15px;
+        }
+
+        .instruction {
+            max-width: 400px;
+            text-align: center;
+            margin: 20px 0;
+            word-wrap: break-word;
+        }
+
+        .grid {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            pointer-events: none;
+        }
+
+        .grid:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: linear-gradient(90deg, rgba(0, 128, 0, 0.2) 1px, transparent 1px),
+                              linear-gradient(180deg, rgba(0, 128, 0, 0.2) 1px, transparent 1px);
+            background-size: 50px 50px;
+            pointer-events: none;
+        }
+
+        .button-group {
+    display: flex;
+    gap: 300px;
+    margin-top: 20px;
+}
+
+.button-column {
+    display: flex;
+    flex-direction: column;
+    gap: 80px;
+}
+
+.answer-btn {
+
+            padding: 20px 180px;
+            background: #2196F3;
+            color: white;
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+            font-size: 42px;
+            font-family: 'Comic Sans MS';
+            box-shadow: 0 1pt 4pt rgba(0, 0, 0, 1);
+            overflow: hidden;
+
+}
+
+        .answer-btn::before {
+            content: '';
+            position: absolute;
+            top: -6pt;
+            left: 0;
+            right: 0;
+            height: 6pt;
+            background: linear-gradient(to bottom, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0));
+            border-radius: 15px 15px 0 0;
+        }
+        .answer-btn::after {
+            content: '';
+            position: absolute;
+            bottom: -6pt;
+            left: 0;
+            right: 0;
+            height: 6pt;
+            background: radial-gradient(circle, rgba(0, 0, 0, 0.1) 0%, rgba(0, 0, 0, 0) 70%);
+            border-radius: 0 0 15px 15px;
+        }
+        .button-group {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+
+        .button-column {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 45%;
+        }
+        #stopwatch {
+            position: absolute;
+            padding: 15px 20px;
+            top: 40px;
+            left: 60px;
+            font-size: 42px;
+        }
+
+        #timer {
+            padding: 15px 20px;
+            top: 35.4%;
+            left: 49.5%;
+            transform: translate(-50%, -50%);
+            font-size: 42px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="grid"></div>
+
+    <div id="stopwatch">00:00</div>
+    <button id="exit-btn" onclick="endTraining()">Завершить</button>
+
+
+        <div class="counter">{{ 'Выполнено ' if settings.task_limit else 'Всего выполнено:' }}
+    {{ session.get('current_question', 1) }}
+    {% if settings.task_limit %}
+        {{ 'из ' ~ settings.task_count }}
+    {% endif %}</div>
+        <div class="question">Решите:</div>
+
+        <div class="formula" id="math-formula">
+            \({{ current_equation }}\)
+        </div>
+
+
+
+<div class="container">
+    <div id="timer">{{ settings.time_settings }}</div>
+    <div class="button-group">
+    <div class="button-column">
+        {% for answer in answers[:2] %}
+            <button class="answer-btn" data-index="{{ loop.index }}" onclick="submitAnswer({{ loop.index0 }})">{{ answer }}</button>
+        {% endfor %}
+    </div>
+    <div class="button-column">
+        {% for answer in answers[2:] %}
+            <button class="answer-btn" data-index="{{ loop.index }}" onclick="submitAnswer({{ loop.index0 + 2 }})">{{ answer }}</button>
+        {% endfor %}
+    </div>
+    </div>
+</div>
+<script>
+        let startTime;
+        let stopwatchInterval;
+        let timeLimit;
+        let timerInterval;
+        timeLimit = {{ settings.time_settings if settings.time_limit else 0 }};
+
+        const maxTasks = {{ settings.task_count if settings.task_limit else 999999 }};
+
+        function endTraining() {
+            if (timerInterval) clearInterval(timerInterval);
+            if (stopwatchInterval) clearInterval(stopwatchInterval);
+            window.location.href = {{ url_for('result') | tojson | safe }};
+        }
+
+        function submitAnswer(selectedIndex) {
+    fetch("{{ url_for('check_answer') }}", {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({answer: selectedIndex})
+    }).then(response => {
+        if (response.ok) return response.json();
+        throw new Error('Network error');
+    }).then(data => {
+        if (data.status === 'finished') {
+            endTraining();
+        } else {
+
+            if (data.current_equation && data.answers) {
+                const currentQuestion = data.current_question;
+                const taskLimit = {{ settings.task_limit|tojson }};
+                const taskCount = {{ settings.task_count }};
+
+
+                let counterText = taskLimit
+                    ? `Выполнено ${currentQuestion} из ${taskCount}`
+                    : `Всего выполнено: ${currentQuestion}`;
+
+                document.querySelector('.counter').textContent = counterText;
+
+                document.querySelector('.formula').innerHTML = `\\(${data.current_equation}\\)`;
+
+                const buttons = document.querySelectorAll('.answer-btn');
+                buttons.forEach((button, index) => {
+                    if (data.answers[index]) {
+                        button.textContent = data.answers[index];
+                    }
+                });
+
+                MathJax.typeset();
+            }
+            if ({{ settings.time_limit|tojson }}) resetTimer();
+        }
+    }).catch(error => {
+        console.error('Error:', error);
+        alert('Произошла ошибка, попробуйте еще раз');
+    });
+}
+
+        function resetTimer() {
+            clearInterval(timerInterval);
+            timeLimit = {{ settings.time_settings }};
+            document.getElementById('timer').textContent = `${String(timeLimit).padStart(2, '0')}`;
+            timerInterval = setInterval(updateTimer, 1000);
+        }
+
+        function startStopwatch() {
+            startTime = Date.now();
+            stopwatchInterval = setInterval(updateStopwatch, 1000);
+        }
+
+        function updateStopwatch() {
+            const elapsedTime = Math.floor((Date.now() - startTime) / 1000);
+            const minutes = String(Math.floor(elapsedTime / 60)).padStart(2, '0');
+            const seconds = String(elapsedTime % 60).padStart(2, '0');
+            document.getElementById('stopwatch').textContent = `${minutes}:${seconds}`;
+        }
+
+        function startTimer() {
+            timeLimit = {{ settings.time_settings }};
+            document.getElementById('timer').style.display = 'block';
+            updateTimer();
+            timerInterval = setInterval(updateTimer, 1000);
+        }
+
+        function updateTimer() {
+            if (timeLimit <= 0) {
+                clearInterval(timerInterval);
+                endTraining();
+                return;
+            }
+
+            const seconds = String(timeLimit).padStart(2, '0');
+            document.getElementById('timer').textContent = `${seconds}`;
+            timeLimit--;
+        }
+
+        function startTraining() {
+            startStopwatch();
+            if ({{ settings.time_limit|tojson }}) {
+                startTimer();
+            } else {
+                document.getElementById('timer').style.display = 'none';
+            }
+        }
+
+
+        window.onload = startTraining;
+
+</script>
+</body>
+</html>

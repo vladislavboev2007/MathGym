@@ -1,0 +1,31 @@
+<component name="InspectionProjectProfileManager">
+  <profile version="1.0">
+    <option name="myName" value="Project Default" />
+    <inspection_tool class="PyPackageRequirementsInspection" enabled="true" level="WARNING" enabled_by_default="true">
+      <option name="ignoredPackages">
+        <list>
+          <option value="fastapi" />
+          <option value="uvicorn" />
+          <option value="pydantic" />
+          <option value="python-multipart" />
+          <option value="sqlalchemy" />
+          <option value="psycopg2-binary" />
+          <option value="python-docx" />
+          <option value="openpyxl" />
+          <option value="pandas" />
+          <option value="reportlab" />
+          <option value="matplotlib" />
+          <option value="fastapi-cors" />
+          <option value="python-dateutil" />
+          <option value="pytz" />
+          <option value="typing-extensions" />
+          <option value="numpy" />
+          <option value="pytest" />
+          <option value="httpx" />
+          <option value="python-jose" />
+          <option value="passlib" />
+        </list>
+      </option>
+    </inspection_tool>
+  </profile>
+</component>
