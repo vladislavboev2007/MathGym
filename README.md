@@ -74,15 +74,21 @@ python app.py
 ## 🧪 Использование
 
 1. **Главная страница** – отображается имя профиля и общий процент способности решения задач.
+<img width="1911" height="945" alt="image" src="https://github.com/user-attachments/assets/f91c8530-12fc-4dc6-9bd2-b0a6efba9c50" />
 2. **Настройки** – задайте имя, включите ограничения по времени или количеству заданий.
+<img width="1911" height="946" alt="image" src="https://github.com/user-attachments/assets/bf7841f1-0e16-49e3-b8dd-43f41c9a878b" />
 3. **Выбор уровня** – выберите один из трёх уровней сложности.
+<img width="1919" height="963" alt="image" src="https://github.com/user-attachments/assets/094c7de0-380c-402f-9b15-5428b9eb4e82" />
 4. **Тренировка** – решайте задачи, нажимая на кнопки с вариантами ответов. Таймер (если включён) отсчитывает время на каждое задание.
+<img width="1917" height="961" alt="image" src="https://github.com/user-attachments/assets/706a83cc-5b36-41ff-958d-e7c00e0ca4c8" />
 5. **Результат** – после завершения (или нажатия «Завершить») отображается статистика. Вы можете скачать отчёт или посмотреть список ошибок.
+<img width="1909" height="966" alt="image" src="https://github.com/user-attachments/assets/b7f34750-04ad-4730-bdb8-4631dbd2a10c" />
 6. **Ошибки** – просмотрите все ошибки с правильными ответами для повторения.
+<img width="1902" height="951" alt="image" src="https://github.com/user-attachments/assets/51c3c961-65a8-41fc-8684-c4fe39ab76b7" />
 
 ---
 ## 👥 Авторы
-* **Боев Владислав** – разработчик (Python, Flask, интеграция)
+* **Боев Владислав** – разработчик (Python, Flask)
 
 * **Колпаков Матвей** – разработчик (генерация задач, логика)
 
